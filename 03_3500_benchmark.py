@@ -4,7 +4,8 @@ Testes comparativos de tempo de execução (benchmarking) entre diferentes algor
 Realiza testes nos algoritmos selection_sort, divide_and_conquer_sort e quick_sort importados de AP_03_ordenacao.
 Funcionamento:
     - Gera K listas com n elementos para cada valor em N;
-    - Os resultados dos testes são armazenados em 3 dicionários
+    - São realizados 3 testes. Um com a lista aleatória, um com a lista inversamente ordenada e outro com a lista ordenada
+    - Os resultados dos testes são armazenados em dicionários
     - Os resultados são plotados em um gráfico usando matplotlib
 
 Requisitos:
