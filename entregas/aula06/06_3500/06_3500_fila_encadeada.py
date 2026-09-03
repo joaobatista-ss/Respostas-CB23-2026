@@ -122,11 +122,28 @@ class FilaEncadeada():
 
     def __repr__(self) -> str:
         """
-        Retorna uma representação textual da pilha.
+        Retorna uma representação textual da pilha (do topo para o começo). (percorre a lista algumas vezes)
 
         Complexity:
             O(n).
         """
+        list_text = []
+        len_output_stack = len(self._output_stack)
+        len_input_stack = len(self._input_stack)
+
+        # Transfere todos os itens de input_stack para output_stack
         while not self._input_stack.is_empty():
+            list_text.append(str(self._input_stack.top()))
             self._output_stack.push(self._input_stack.pop())
-        return str(self._output_stack)
+
+        # Transfere todos os itens para input_stack
+        while not self._output_stack.is_empty():
+            self._input_stack.push(self._output_stack.pop())
+
+        # Transfere os itens de output_stack para input_stack
+        # Volta as listas para a configuração inicial
+        while len_output_stack:
+            len_output_stack -= 1
+            list_text.append(str(self._input_stack.top()))
+            self._output_stack.push(self._input_stack.pop())
+        return " -> ".join(list_text)
