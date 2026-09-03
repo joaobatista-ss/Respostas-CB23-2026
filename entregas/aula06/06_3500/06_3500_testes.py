@@ -1,4 +1,5 @@
 from P06_3500_fila_encadeada import PilhaEncadeada
+from unittest import TestCase, main
 import random
 
 class TestPilhaEncadeada(TestCase):
@@ -97,4 +98,26 @@ class TestPilhaEncadeada(TestCase):
                 self.assertEqual(len(stack), size_stack)
 
     def test_storage_of_different_types(self):
-        pass
+        """
+        Testa o armazenamento de itens de tipos diferentes, incluindo valores repetidos e None.
+        """
+        stack = PilhaEncadeada()
+        elements = [None, "X", Exception]
+        size = 0
+
+        for elem in elements:
+            for _ in range(100):
+                size += 1
+                stack.push(elem)
+                self.assertEqual(stack.top(), elem)
+                self.assertEqual(len(stack), size)
+
+        for elem in elements[::-1]:
+            for _ in range(100):
+                size -= 1
+                self.assertEqual(stack.pop(), elem)
+                self.assertEqual(len(stack), size)
+            
+
+if __name__ == '__main__':
+    main(verbosity=2)
