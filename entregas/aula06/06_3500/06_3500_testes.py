@@ -1,5 +1,5 @@
 from P06_3500_fila_encadeada import PilhaEncadeada
-from unittest import TestCase
+import random
 
 class TestPilhaEncadeada(TestCase):
     """
@@ -36,8 +36,8 @@ class TestPilhaEncadeada(TestCase):
         """
         Teste de pop e top em PilhaEncadeada vazia.
 
-        Verifica se a lista encadeada retorna corretamente exceção IndexError durante
-        as operações top e pop com a lista vazia.
+        Verifica se a pilha encadeada retorna corretamente exceção IndexError durante
+        as operações top e pop com a pilha vazia.
         """
         stack = PilhaEncadeada()
         self.assertRaises(IndexError, stack.pop)
@@ -63,7 +63,38 @@ class TestPilhaEncadeada(TestCase):
             self.assertEqual(len(stack), 1000-c)
 
     def test_alternating_operations(self):
-        pass
+        """
+        Teste de alternância de operações.
+
+        Adiciona ou remove elementos em uma pilha de maneira imprevisível, fazendo verificações dos métodos:
+            push, pop, top, len.
+        """
+        stack = PilhaEncadeada()
+        size_stack = 0
+
+        for _ in range(10000):
+            operation = random.choice(["push", "pop", "top", "len"])
+
+            if operation == "push":
+                size_stack += 1
+                stack.push(str(size_stack))
+                continue
+
+            if operation == "pop":
+                if not size_stack:
+                    continue
+                self.assertEqual(stack.pop(), str(size_stack))
+                size_stack -= 1
+                continue
+
+            if operation == "top":
+                if not size_stack:
+                    continue
+                self.assertEqual(stack.top(), str(size_stack))
+                continue
+
+            if operation == "len":
+                self.assertEqual(len(stack), size_stack)
 
     def test_storage_of_different_types(self):
         pass
