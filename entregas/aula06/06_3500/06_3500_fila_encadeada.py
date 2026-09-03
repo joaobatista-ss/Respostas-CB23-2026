@@ -108,6 +108,18 @@ class FilaEncadeada():
         """
         return len(self._input_stack) + len(self._output_stack)
 
+    def __len__(self) -> int:
+        """
+        Retorna o número de elementos na fila.
+
+        Returns:
+            int: Número de elementos na fila.
+
+        Complexity:
+            O(1).
+        """
+        return self.size
+
     def __repr__(self) -> str:
         """
         Retorna uma representação textual da pilha.
