@@ -10,7 +10,28 @@ class TestPilhaEncadeada(TestCase):
         Alternância de operações;
         Armazenamento de itens de tipos diferentes, incluindo valores repetidos e None.
     """
+
     def test_lifo(self):
+        """
+        Teste de ordem LIFO em sequencia de push/pop.
+
+        Adiciona três elementos em uma PilhaEncadeada vazia, depois remove os elementos.
+        Verifica as operações top e pop.
+        """
+        stack = PilhaEncadeada()
+        stack.push("A")
+        stack.push("B")
+        stack.push("C")
+
+        self.assertEqual(stack.top(), 'C')
+        self.assertEqual(stack.pop(), 'C')
+
+        self.assertEqual(stack.top(), 'B')
+        self.assertEqual(stack.pop(), 'B')
+
+        self.assertEqual(stack.top(), 'A')
+        self.assertEqual(stack.pop(), 'A')
+
         pass
 
     def test_len(self):
