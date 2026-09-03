@@ -34,7 +34,7 @@ class TestPilhaEncadeada(TestCase):
 
     def pop_and_top_in_empty_stack(self):
         """
-        Teste de pop e top em ListaEncadeada vazia.
+        Teste de pop e top em PilhaEncadeada vazia.
 
         Verifica se a lista encadeada retorna corretamente exceção IndexError durante
         as operações top e pop com a lista vazia.
@@ -42,10 +42,25 @@ class TestPilhaEncadeada(TestCase):
         stack = PilhaEncadeada()
         self.assertRaises(IndexError, stack.pop)
         self.assertRaises(IndexError, stack.top)
-        
 
     def test_len(self):
-        pass
+        """
+        Teste de coerência de len após inserções e remoções.
+
+        Adiciona 1000 elementos e os remove, enquanto faz verificações de __len__.
+        """
+
+        stack = PilhaEncadeada()
+
+        # Testes adicionando elementos
+        for c in range(1, 1001):
+            stack.push(1)
+            self.assertEqual(len(stack), c)
+
+        # Testes removendo elementos
+        for c in range(1, 1001):
+            stack.pop()
+            self.assertEqual(len(stack), 1000-c)
 
     def test_alternating_operations(self):
         pass
