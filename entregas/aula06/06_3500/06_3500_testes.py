@@ -33,7 +33,7 @@ class TestPilhaEncadeada(TestCase):
         self.assertEqual(stack.top(), 'A')
         self.assertEqual(stack.pop(), 'A')
 
-    def pop_and_top_in_empty_stack(self):
+    def test_pop_and_top_in_empty_stack(self):
         """
         Teste de pop e top em PilhaEncadeada vazia.
 
