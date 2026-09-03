@@ -32,7 +32,17 @@ class TestPilhaEncadeada(TestCase):
         self.assertEqual(stack.top(), 'A')
         self.assertEqual(stack.pop(), 'A')
 
-        pass
+    def pop_and_top_in_empty_stack(self):
+        """
+        Teste de pop e top em ListaEncadeada vazia.
+
+        Verifica se a lista encadeada retorna corretamente exceção IndexError durante
+        as operações top e pop com a lista vazia.
+        """
+        stack = PilhaEncadeada()
+        self.assertRaises(IndexError, stack.pop)
+        self.assertRaises(IndexError, stack.top)
+        
 
     def test_len(self):
         pass
