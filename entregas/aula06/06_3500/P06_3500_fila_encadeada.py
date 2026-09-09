@@ -147,3 +147,20 @@ class FilaEncadeada():
             list_text.append(str(self._input_stack.top()))
             self._output_stack.push(self._input_stack.pop())
         return " -> ".join(list_text)
+
+
+
+if __name__ == "__main__":
+    queue = FilaEncadeada()
+    for i in range(1, 11):
+        queue.enfileirar(i)
+    print(queue)
+    print(queue.desenfileirar())
+    print(queue.desenfileirar())
+    print(queue.desenfileirar())
+    queue.enfileirar(float("-inf"))
+    print(queue.desenfileirar())
+    print(queue)
+
+    print("Size:", len(queue))
+    print("Topo:", queue.frente())
