@@ -1,5 +1,6 @@
-from P06_3500_pilha_encadeada import PilhaEncadeada
 from typing import Any
+
+from P06_3500_pilha_encadeada import PilhaEncadeada
 
 
 class FilaEncadeada():
@@ -29,7 +30,7 @@ class FilaEncadeada():
         Remove e retorna o elemento que está no início da fila.
 
         Returns:
-            Any: Elemento que está no início da fila.
+            Any: Elemento removido do início da fila.
 
         Raises:
             IndexError: Se a fila estiver vazia.
@@ -51,7 +52,7 @@ class FilaEncadeada():
         Retorna o elemento que está no início da fila.
 
         Returns:
-            Any: Elemento removido do início da fila.
+            Any: Elemento que está no início da fila.
 
         Raises:
             IndexError: Se a fila estiver vazia.
@@ -147,7 +148,6 @@ class FilaEncadeada():
             list_text.append(str(self._input_stack.top()))
             self._output_stack.push(self._input_stack.pop())
         return " -> ".join(list_text)
-
 
 
 if __name__ == "__main__":
