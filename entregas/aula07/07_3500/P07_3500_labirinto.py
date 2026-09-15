@@ -1,7 +1,3 @@
-from copy import deepcopy
-from pprint import pprint
-from time import sleep
-
 # python 3
 
 """
@@ -25,6 +21,7 @@ O queijo (cheese) é colocado aleatoriamente em qualquer sala.
 """
 
 import random
+from time import sleep
 
 
 def generate_maze(m, n, room=0, wall=1, cheese='.'):
@@ -94,19 +91,51 @@ def print_maze(maze):
     maze : list[list]
         Matriz retornada por :func:`generate_maze`.
     """
-    print("\033[H\033[J")
     for row in maze:
         print(" ".join(map(str, row)))
-    sleep(0.05)
 
 
-def print_maze(maze):
+def print_maze_2(maze):
+    """Limpa o terminal e imprime o labirinto, todas as linhas de uma vez.
+
+    Parameters
+    ----------
+    maze : list[list]
+        Matriz retornada por :func:`generate_maze`.
+    """
     screen = "\n".join(" ".join(map(str, row)) for row in maze)
-    print("\033[H\033[J" + "\n"*30 + screen, end="")
+    print("\033[H\033[J")
+    print(screen, end="")
     sleep(0.003)
 
 
-def find_path(maze, room=0, wall=1, path=2, cheese='.'):
+def find_path(maze, room=0, wall=1, path=2, cheese='.') -> list:
+    """Encontra o trajeto da posição inicial até o objetivo (queijo).
+
+    Utiliza um algoritmo de Busca em Profundidade (DFS) iterativo para explorar 
+    o labirinto a partir da coordenada inicial (1, 1). Ao encontrar o objetivo, 
+    o caminho bem-sucedido é salvo, marcado diretamente na matriz `maze` 
+    e impresso passo a passo.
+
+    Parameters
+    ----------
+    maze : list[list]
+        Matriz retornada por :func:`generate_maze`.
+    room : int or str, optional
+        Valor usado para representar passagens abertas. Padrão: 0.
+    wall : int or str, optional
+        Valor usado para representar paredes. Padrão: 1.
+    path : int or str, optional
+        Valor que substituirá as salas vazias representar o caminho final encontrado. Padrão: 2.
+    cheese : str, optional
+        Símbolo colocado aleatoriamente em uma sala como objetivo. Padrão: '.'.
+
+    Returns
+    -------
+    list[tuple]
+        Lista de tuplas contendo as coordenadas (x, y) que formam o trajeto 
+        exato da origem até o queijo (incluindo a própria coordenada do queijo).
+    """
     directions = [(-1, 0), (1, 0), (0, -1), (0, 1)]
     m, n = len(maze), len(maze[0])
 
@@ -118,6 +147,7 @@ def find_path(maze, room=0, wall=1, path=2, cheese='.'):
     while temp_stack:
         x, y, _directions = temp_stack.pop()
         if maze[x][y] == cheese:
+            stack_visiteds[-1].append((x, y))
             break
         stack_visiteds[-1].append((x, y))
 
