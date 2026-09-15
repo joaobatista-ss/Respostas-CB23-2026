@@ -72,9 +72,8 @@ def generate_maze(m, n, room=0, wall=1, cheese='.'):
         if 0 <= nx < m and 0 <= ny < n and maze[2 * nx + 1][2 * ny + 1] == wall:
             # Derruba a parede entre (x,y) e (nx,ny)
             maze[2 * x + 1 + dx][2 * y + 1 + dy] = room
-            stack.append((nx, ny, random.sample(directions, len(directions))))
-            sleep(0.1)
             print_maze(maze)
+            stack.append((nx, ny, random.sample(directions, len(directions))))
 
     # Posiciona o queijo em uma sala aleatória (rejeita paredes)
     while True:
@@ -95,25 +94,63 @@ def print_maze(maze):
     maze : list[list]
         Matriz retornada por :func:`generate_maze`.
     """
-    print("\n"*10)
+    print("\033[H\033[J")
     for row in maze:
         print(" ".join(map(str, row)))
+    sleep(0.05)
+
+
+def print_maze(maze):
+    screen = "\n".join(" ".join(map(str, row)) for row in maze)
+    print("\033[H\033[J" + "\n"*30 + screen, end="")
+    sleep(0.003)
+
+
+def find_path(maze, room=0, wall=1, path=2, cheese='.'):
+    directions = [(-1, 0), (1, 0), (0, -1), (0, 1)]
+    m, n = len(maze), len(maze[0])
+
+    # Inicia a busca na posição start
+    start = (1, 1)
+    temp_stack = [(*start, directions)]
+    stack_visiteds = [[]]
+
+    while temp_stack:
+        x, y, _directions = temp_stack.pop()
+        if maze[x][y] == cheese:
+            break
+        stack_visiteds[-1].append((x, y))
+
+        has_option = False
+        for direction in _directions:
+            dx, dy = direction
+            nx, ny = x + dx, y + dy
+            if 0 < nx < m and 0 < ny < n and maze[nx][ny] != wall:
+                inverted_direction = (-direction[0], -direction[1])
+                temp_stack.append((nx, ny, [d for d in directions if d != inverted_direction]))
+                if has_option:
+                    stack_visiteds.append([])
+                has_option = True
+        if not has_option:
+            stack_visiteds.pop()
+    final_path = [item for stack in stack_visiteds for item in stack]
+    for x, y in final_path:
+        maze[x][y] = path
+        print_maze(maze)
+    return final_path
 
 
 # Example usage:
 if __name__ == '__main__':
-    m, n = 10, 14  # Grid size
-    m, n = 5, 8  # Grid size
-    random.seed(10110)
-    maze = generate_maze(m, n, "🟩", "🟥", "🧀")
-    print('Maze 1')
-    print_maze(maze)
     while True:
-        input("-")
-
-    room = ' '
-    wall = 'W'
-    cheese = '*'
-    maze = generate_maze(m, n, room, wall, cheese)
-    print('\nMaze 2')
-    print_maze(maze)
+        m, n = 10, 14  # Grid size
+        m, n = 16, 28  # Grid size
+        # random.seed(10110)
+        maze = generate_maze(m, n, room="⬜", wall="🟥", cheese="🧀")
+        print('Maze 1')
+        print_maze(maze)
+        find_path(maze, room="⬜", wall="🟥", path="🟩", cheese="🧀")
+        sleep(0.5)
+        maze_ = [["⬛" if i != "🟩" else i for i in line] for line in maze]
+        print_maze(maze_)
+        sleep(2)
