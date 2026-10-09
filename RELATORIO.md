@@ -1,4 +1,4 @@
-# Relatório — <seu nome> (<sua matrícula>)
+# Relatório — João Batista de Sousa Silva (3500)
 
 Relatório do projeto, preenchido na sua branch. Cada marco acrescenta a sua seção. Responda com as suas palavras e com
 os números da sua execução; cada resposta cabe em até 6 linhas, além das tabelas.
@@ -9,9 +9,16 @@ os números da sua execução; cada resposta cabe em até 6 linhas, além das ta
 
 <!-- Cole aqui a saída de `which python` e da Etapa 0 do `python marco1.py`. -->
 
+D:\Projetos\IMPATech\Programacao_2\Respostas-CB23-2026\.venv\Scripts\python.exe
+
+=== Etapa 0: ambiente ===
+Python 3.12.10 | NumPy 2.5.3 | fornecido 1.0
+
 ### R1 — Expressões regulares
 
 <!-- Uma string que re.match aceita e re.fullmatch rejeita com o padrão de tag; consequência para valida_tag. -->
+
+" PT101", é aceita por re.match, pois a expressão regular "[A-Z]{1,2}\d{1,3}" é encontrada. Porém, re.fullmatch a rejeita, pois é verificado se a string inteira corresponde a expressão regular.
 
 ### R2 — Linhas inválidas
 
