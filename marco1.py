@@ -67,25 +67,28 @@ def etapa2(texto: str, registros: list, verdade: dict) -> None:
     """Etapa 2 — Lambda e compreensões (issue #2)."""
     print("\n=== Etapa 2: lambda e compreensões ===")
     # (a) Ordene com sorted e key=lambda: (i) por (tag, instante); (ii) por instante decrescente.
-    por_tag_instante = _todo("2(a)(i)")
-    decrescente = _todo("2(a)(ii)")
+    por_tag_instante = sorted(registros, key=lambda reg: (reg.tag, reg.instante))
+    decrescente = sorted(registros, key=lambda reg: (reg.instante), reverse=True)
     assert por_tag_instante[0].tag == "B1"
     assert decrescente[0].instante == max(r.instante for r in registros)
 
     # (b) Contagens de PT102 (só registros com a chave "contagens"): map/filter e compreensão.
-    com_map = _todo("2(b) map/filter")
-    com_compreensao = _todo("2(b) compreensão")
+    com_map = [*map(
+        lambda reg: reg.valores.get("contagens"),
+        filter(lambda reg: reg.valores.get("contagens") is not None and reg.tag == "PT102", registros)
+    )]
+    com_compreensao = [reg.valores.get("contagens") for reg in registros if reg.valores.get("contagens") and reg.tag == "PT102"]
     assert com_map == com_compreensao and len(com_compreensao) == 600
 
     # (c) Contagens acima de 2000 (compreensão de lista) e tags distintas (de conjunto).
-    altas = _todo("2(c) altas")
-    tags = _todo("2(c) tags")
+    altas = [reg.valores.get("contagens") for reg in registros if (reg.valores.get("contagens") or 0) > 2000]
+    tags = {reg.tag for reg in registros}
     assert len(altas) == 5
     assert tags == {"B1", "PT101", "PT102", "FT201", "LT301"}
 
     # (d) Com re.sub e uma lambda como repl, troque pulsos=N por volume_L=V (V = N * 0,1,
     #     com uma casa decimal; por exemplo, pulsos=3892 vira volume_L=389.2).
-    convertido = _todo("2(d)")
+    convertido = re.sub(r"pulsos=(\d+)", lambda s: f"volume_L={float(s.group(1)) / 10}", texto)
     assert convertido.count("volume_L=") == 600 and "pulsos=" not in convertido
 
     # (e) Late binding: a versão errada (não corrija esta linha) e a sua.
@@ -97,7 +100,15 @@ def etapa2(texto: str, registros: list, verdade: dict) -> None:
 
     # (f) Converta a média das contagens normais de PT102 (até 2000) com a escala nominal
     #     (certos["PT102"]) e imprima ao lado de verdade["pressao_recalque"].
-    p_nominal = _todo("2(f)")
+    contagens_ate_ate_2k = [
+        reg.valores.get("contagens") for reg in registros
+        if (reg.valores.get("contagens") or float("+inf")) < 2000 and reg.tag == "PT102"
+    ]
+    media_contagens_normais_float = sum(contagens_ate_ate_2k)/len(contagens_ate_ate_2k)
+    print(f"Valor obtido a partir da conversão da média das contagens normais de PT102 (até 2000) \
+com a escala nominal: {media_contagens_normais_float:.02f}")
+    print(f"Pressão Recalque obtida do dicionário de verdade: {verdade["pressao_recalque"]}")
+    p_nominal = certos["PT102"](media_contagens_normais_float)
     assert abs(p_nominal - verdade["pressao_recalque"]) > 100
 
 
