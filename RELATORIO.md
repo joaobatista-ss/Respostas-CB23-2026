@@ -46,7 +46,7 @@ O dicionário de verdade inclui o par: '"pressao_recalque": PRESSAO_RECALQUE'. P
 
 ### R5 — Previsão × medição (Etapa 3)
 
-Previsões registradas no commit: <!-- cole o hash curto do commit de previsões -->
+Previsões registradas no commit: 5a436f9
 
 | Grandeza | Previsão | Medido |
 | --- | --- | --- |
