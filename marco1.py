@@ -174,11 +174,21 @@ def etapa4(registros: list) -> None:
     s = serie(registros, "PT102", "contagens")
 
     # (a) Imprima a média, o desvio (ddof=1) e a amplitude.
+    media = s.mean()
+    desvio = s.std(ddof=1)
+    amplitude = s.amplitude()
+    print(f"Média: {media:.03f}\nDesvio Padrão: {desvio:.03f}\nAmplitude: {amplitude:.03f}")
+
     assert len(s) == 600 and s.amplitude() > 300
 
     # (b) Média móvel de 30 pontos: imprima o tamanho e os valores mínimo e máximo, ao lado
     #     dos mínimo e máximo da série.
     mm = s.media_movel(30)
+    print("\n")
+    print(f"Tamanho da média móvel: {len(mm)}")
+    print(f"Mínimo com a média móvel: {mm.min():.3f}\nMínimo na série original: {s.min():.3f}")
+    print(f"Máximo com a média móvel: {mm.max():.3f}\nMáximo na série original: {s.max():.3f}")
+
     assert len(mm) == 571
 
     # (c) Médias por minuto (10 leituras de 6 s).
@@ -187,7 +197,12 @@ def etapa4(registros: list) -> None:
     assert math.isclose(float(por_minuto.mean()), float(s.mean()))
 
     # (d) Imprima o tipo (type(...).__name__) de s + s, s[1:], s * 2, s.sum() e s[0].
-    _todo("4(d)")
+    print("\n")
+    print(f"Tipo de 's + s': {type(s + s).__name__}")
+    print(f"Tipo de 's[1:]': {type(s[1:]).__name__}")
+    print(f"Tipo de 's * 2': {type(s * 2).__name__}")
+    print(f"Tipo de 's.sum()': {type(s.sum()).__name__}")
+    print(f"Tipo de 's[0]': {type(s[0]).__name__}")
 
 
 def main(matricula: int = MATRICULA) -> None:
