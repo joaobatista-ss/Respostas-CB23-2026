@@ -121,18 +121,49 @@ def etapa3() -> None:
     # (a) Memória: imprima uma tabela com estrutura, bytes por elemento, bytes totais e a
     #     razão em relação à lista.
     memoria = medir_memoria(contagens)
-    _todo("3(a) tabela")
+
+    n_elementos = len(contagens)
+    tamanho_lista = memoria["list"]
+
+    print("-" * 62)
+    print(f"{'Estrutura':<15} {'Bytes/Elem':<15} {'Bytes Totais':<15} {'Razão vs Lista':<15}")
+    print("-" * 62)
+
+    for estrutura, bytes_totais in memoria.items():
+        bytes_por_elem = bytes_totais / n_elementos
+        razao = bytes_totais / tamanho_lista
+        print(f"{estrutura:<15} {bytes_por_elem:<15.1f} {bytes_totais:<15} {razao:<15.2f}")
+
     assert memoria["uint16"] == 2_000_000
     assert memoria["list"] > 10 * memoria["uint16"]
 
     # (b) Tempo: imprima uma tabela com o tempo (ms) e a aceleração em relação ao laço.
     tempos = medir_tempos(contagens, k=10)
-    _todo("3(b) tabela")
+
+    tempo_laco = tempos["laço"]
+    print("\n\n\n" + "-" * 50)
+    print(f"{'Versão':<15} {'Tempo (ms)':<15} {'Aceleração vs Laço':<15}")
+    print("-" * 50)
+
+    for versao, tempo_segundos in tempos.items():
+        tempo_ms = tempo_segundos * 1000
+        # Aceleração: quantas vezes é mais rápido que o laço (laço / atual)
+        aceleracao = tempo_laco / tempo_segundos if tempo_segundos > 0 else 0
+
+        print(f"{versao:<15} {tempo_ms:<15.3f} {aceleracao:<15.2f}")
+
     assert tempos["laço"] / tempos["vetorizado"] >= 5
 
     # (c) Tipos e overflow: imprima os dois resultados.
     misto = np.array([1, 2.5, "a"])
     estouro = np.array([4095], dtype=np.uint16) * 20
+
+    print("\n\n\n" + "-" * 42)
+    print(f"{'Variável':<15} {'Dtype / Resultado':<25}")
+    print("-" * 42)
+    print(f"{'misto':<15} {str(misto.dtype):<25}")
+    print(f"{'estouro[0]':<15} {estouro[0]:<25}")
+
     assert misto.dtype.kind == "U"
     assert estouro[0] == 16364 and 4095 * 20 == 81900
 

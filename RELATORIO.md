@@ -50,11 +50,22 @@ Previsões registradas no commit: 5a436f9
 
 | Grandeza | Previsão | Medido |
 | --- | --- | --- |
-| Memória da lista / memória do `uint16` | 14 | |
-| Tempo do laço / tempo vetorizado | 14 | |
-| Tempo da compreensão / tempo do laço | 1 | |
+| Memória da lista / memória do `uint16` | 14 | 18 |
+| Tempo do laço / tempo vetorizado | 14 | 22.17 |
+| Tempo da compreensão / tempo do laço | 1 | 0.67 |
 
 <!-- Explique a maior diferença entre previsão e medição; por que uint16 * 20 dá 16364; que dtype você escolheria para contagens e para kPa. -->
+
+A maior diferença entre previsão e medição está em tempo do laço / tempo vetorizado.
+O NumPy é muito mais otimizado para operações em sequência, pois está implementado em baixo nível em C compilado, e não precisa passar pelo interpretador do  Python.
+O NumPy também utiliza setores contíguos na memória. Isso que deixa o acesso mais eficiente, pois elimina a necessidade de buscar por uma referência.
+
+O uint16 armazena os números em 16 bits, sem indicar se é positivo ou negativo.
+Portanto, pode armazenar de 0 até 2^(16)-1 = 65535.
+Como 4095 \* 20 dá 81.900, que ultrapassa o limite, acontecerá o erro de overflow e o valor armazenado será 81900 − 65.536 = 16364.
+
+Eu escolheria 'float32' para contagens de kPa, pois a conversão das contagens em kPA gera números decimais (floating points) e a precisão de 32 bits já é suficiente para armazenar os valores que serão resultados da precisão do sensor.
+O float64 utilizaria muito mais espaço sem necessidade.
 
 ### R6 — Tipos da SerieTemporal (Etapa 4d)
 
