@@ -69,17 +69,29 @@ O float64 utilizaria muito mais espaço sem necessidade.
 
 ### R6 — Tipos da SerieTemporal (Etapa 4d)
 
-Previsões registradas no commit: 
+Previsões registradas no commit: baffd37
 
 | Expressão | Tipo previsto | Tipo observado |
 | --- | --- | --- |
-| `s + s` | np.ndarray | |
-| `s[1:]` | np.ndarray | |
-| `s * 2` | np.ndarray | |
-| `s.sum()` | np.int64 | |
-| `s[0]` | np.int64 | |
+| `s + s` | np.ndarray | SerieTemporal |
+| `s[1:]` | np.ndarray | SerieTemporal |
+| `s * 2` | np.ndarray | SerieTemporal |
+| `s.sum()` | np.int64 | SerieTemporal |
+| `s[0]` | np.int64 | float64 |
 
 <!-- Explique o resultado que mais surpreendeu você. -->
+
+Quase todos os resultados me surpreenderam.
+Todas as operações analisadas são herdadas de ndarray, do NumPy.
+Todas elas são out-of-place, pois retornam um novo objeto como resultado da operação, sem modificar os objetos de entrada.
+
+Como uma implementação do NumPy retornou um objeto SerieTemporal, suponho que por baixo dos panos esteja sendo criado uma cópia da instância passada como parâmetro, e as modificações sejam feitas in-place nessa cópia.
+
+De acordo com a biblioteca do NumPy, é usado um método `ndarray.__array_wrap__(array, [context, [return_scalar, ]]/)`,
+que retorna uma visualização array com o mesmo tipo que o próprio objeto.
+
+O resultado que mais me surpreendeu é `s.sum()` retornar um array de dimensão zero do tipo SerieTemporal.
+Em todos os casos, o tipo do resultado depende de como foi feita a implementação da operação no NumPy.
 
 ### R7 — Issue #4
 
