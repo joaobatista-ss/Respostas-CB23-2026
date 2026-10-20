@@ -4,6 +4,7 @@ Regras: pelo menos 8 testes seus (o exemplo abaixo não conta), uma docstring em
 dizendo qual caso ele cobre, e floats comparados com assertAlmostEqual ou np.allclose.
 """
 import unittest
+from datetime import datetime
 
 import numpy as np
 
@@ -68,8 +69,17 @@ class TestSerieTemporalReamostrar(unittest.TestCase):
 class TestLerLog(unittest.TestCase):
     """Testes das regras do contrato de ler_log em dados."""
 
+    def test_texto_vazio(self):
+        """Texto vazio retorna listas vazias."""
+        registros, invalidas = ler_log("")
+        self.assertEqual(registros, [])
+        self.assertEqual(invalidas, [])
+
     def test_linhas_vazias_sao_ignoradas(self):
-        """Linhas vazias ou com espaços não são registros nem linhas inválidas."""
+        """Linhas vazias ou só com espaços não são registros nem linhas inválidas."""
+        registros, invalidas = ler_log("\n   \n\t\n")
+        self.assertEqual(registros, [])
+        self.assertEqual(invalidas, [])
         texto = "\n   \n2026-10-05 08:00:00 INFO PT102 contagens=10\n \t\n"
         registros, invalidas = ler_log(texto)
         self.assertEqual(len(registros), 1)
@@ -78,6 +88,42 @@ class TestLerLog(unittest.TestCase):
     def test_data_impossivel_preserva_linha_como_invalida(self):
         """Uma data impossível faz a linha original aparecer entre as inválidas."""
         linha = "2026-13-05 08:00:00 INFO PT102 contagens=10"
+        registros, invalidas = ler_log(linha)
+        self.assertEqual(registros, [])
+        self.assertEqual(invalidas, [linha])
+
+    def test_preserva_ordem_dos_registros(self):
+        """Os registros válidos mantêm a ordem das linhas de entrada."""
+        texto = "\n".join([
+            "2026-10-20 12:30:00 INFO PT101 valor=10",
+            "2026-10-20 12:31:00 WARN PT102 valor=20",
+            "2026-10-20 12:32:00 ALARME PT103 evento=falha"
+        ])
+
+        registros, invalidas = ler_log(texto)
+        self.assertEqual([r.tag for r in registros], ["PT101", "PT102", "PT103"])
+        self.assertEqual(invalidas, [])
+
+    def test_linha_com_formato_invalido(self):
+        """Uma linha que não corresponde ao padrão é descartada."""
+        linha = "isto não é uma linha válida do log"
+        registros, invalidas = ler_log(linha)
+        self.assertEqual(registros, [])
+        self.assertEqual(invalidas, [linha])
+
+    def test_data_ou_hora_impossivel(self):
+        """Datas e horas impossíveis tornam as linhas inválidas."""
+        linhas = "\n".join([
+            "2026-13-20 12:30:00 INFO PT102 contagens=10",
+            "2026-10-20 25:30:00 INFO PT102 contagens=10",
+        ])
+        registros, invalidas = ler_log(linhas)
+        self.assertEqual(registros, [])
+        self.assertEqual(invalidas, linhas.splitlines())
+
+    def test_linha_invalida_preserva_texto_original(self):
+        """As linhas inválidas são devolvidas exatamente como recebidas."""
+        linha = " linha com formato inválido  "
         registros, invalidas = ler_log(linha)
         self.assertEqual(registros, [])
         self.assertEqual(invalidas, [linha])
