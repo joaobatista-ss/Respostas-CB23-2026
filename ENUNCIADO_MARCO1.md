@@ -314,17 +314,17 @@ Resolve as issues #1 a #5 do enunciado.
 
 **Checklist do Marco 1**
 
-- [ ] `git fetch upstream` seguido de `git diff upstream/main --stat -- fornecido/` não mostra
+- [x] `git fetch upstream` seguido de `git diff upstream/main --stat -- fornecido/` não mostra
       nada (nenhum arquivo de `fornecido/` foi alterado).
-- [ ] `python -m unittest discover -v` roda sem falhas, com todos os testes de aceitação e
+- [x] `python -m unittest discover -v` roda sem falhas, com todos os testes de aceitação e
       pelo menos 8 testes seus.
-- [ ] `python marco1.py` roda sem exceções, com a sua matrícula, e todos os `assert` passam.
-- [ ] Os módulos de `elevatoria/` não têm `print`, e todo o código novo tem docstring e
+- [x] `python marco1.py` roda sem exceções, com a sua matrícula, e todos os `assert` passam.
+- [x] Os módulos de `elevatoria/` não têm `print`, e todo o código novo tem docstring e
       anotações de tipo (veja as regras da casa no `README.md`).
-- [ ] O commit de previsões vem antes do código das Etapas 3 e 4, e o teste de regressão da
+- [x] O commit de previsões vem antes do código das Etapas 3 e 4, e o teste de regressão da
       #4 falhava antes da correção.
-- [ ] O `RELATORIO.md` tem a seção "Marco 1", com o ambiente e as respostas R1 a R7.
-- [ ] Todo o código foi executado, testado e lido por você, inclusive o gerado com ajuda de IA.
+- [x] O `RELATORIO.md` tem a seção "Marco 1", com o ambiente e as respostas R1 a R7.
+- [x] Todo o código foi executado, testado e lido por você, inclusive o gerado com ajuda de IA.
 
 **Originalidade.** Os nomes e as assinaturas públicas são definidos pela base, e todo o
 código que está na `main` fica fora da comparação do antiplágio. A comparação recai sobre o
