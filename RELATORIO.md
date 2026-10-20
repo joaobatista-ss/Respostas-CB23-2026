@@ -96,3 +96,48 @@ Em todos os casos, o tipo do resultado depende de como foi feita a implementaç�
 ### R7 — Issue #4
 
 <!-- Sintoma; o teste de regressão (nome); a causa, em termos da soma acumulada; a correção; por que os testes de aceitação não pegaram o defeito; mais um caso que eles não cobrem e qual teste seu o cobre. -->
+
+Observação: indice tem contagem iniciando em 0, e posição tem contagem iniciando em 1.
+
+A função media_movel de SerieTemporal, recebe um array, digamos que de tamanho n, e um valor k inteiro que será o tamanho da janela da média.
+
+Essa função deve iterar sobre o array recebido, e em cada etapa i, deve calcular a média dos k elementos subsequentes (a contar da posição i) no array original e armazenar na posição i de um novo array. E esse novo array (com as médias) deve ser retornado.
+
+Note que ao chegar na iteração de numero n-k+2, haverá n-(n-k+2)+1 = k-1 elementos (incluindo o atual). Nesse ponto, não poderá ser calculada a média de k elementos.
+Portanto, ao terminar a iteração de nº n-k+1, a função deve interromper a iteração e retornar o array construído com as médias.
+
+
+Sintoma: Ao invés de retornar um array com n-k+1 elementos, era retornado apenas n-k.
+
+
+Teste de regressão:
+Atualmente há dois testes. O primeiro chamado test_media_movel que verifica o tamanho e cada um dos valores retornados por média móvel com n=50 e k=3.
+E outro chamado test_media_movel_600_pontos_janela_30 que faz a verificação do tamanho da media movel, e do primeiro e ultimo valor retornado, desta vez com n=600 e k=30.
+O primeiro teste já detecta o problema, pois a implementação retorna 47 valores em vez dos 48 esperados.
+
+
+Causa do Problema:
+media_movel é implementada da seguinte forma:
+É chamada a função cumsum do NumPy, que cria um novo array - chamemos de acumulada - com n elementos, onde o elemento de índice i é exatamente o resultado da soma de todos os elementos do array original do indice 0 até o indice i, inclusive. Acumulada possui, também, n elementos.
+
+Em seguida, a implementação calcula:
+`(acumulada[k:] - acumulada[:-k]) / k`
+
+Como os dois intervalos possuem n-k elementos, o resultado também possui apenas n-k valores.
+Além disso, a diferença entre as somas acumuladas desloca as janelas em uma posição: o primeiro resultado corresponde à janela iniciada no índice 1, e não no índice 0. Portanto, a primeira janela válida é omitida.
+
+
+Correção:
+A solução consiste em acrescentar um zero antes da soma acumulada, usando np.concatenate.
+Desta forma, a soma acumulada passa a ter os n+1 elementos, e o calculo `(acumulada[k:] - acumulada[:-k]) / k` passa a retornar a media movel incluindo a primeira janela válida.
+
+Posteriormente, a função converte o array de médias em um objeto SerieTemporal com o método SerieTemporal.de_lista(), e o retorna.
+
+
+Por que os testes de aceitação não pegaram o defeito:
+Os testes de aceitação não pegaram o defeito porque nenhum deles verificava se a quantidade de elementos retornados era condizente com o contrato da função. Portanto, as verificações não identificavam quando a primeira janela válida era omitida.
+
+Mais um caso que eles não cobrem e qual teste seu o cobre:
+Outro caso não coberto pelas verificações anteriores é a verificação numérica de cada valor retornado.
+O teste test_media_movel que foi implementado, passa a verificar numericamente - usando np.allclose - cada um dos valores retornados por media_movel, tendo como parametro um array de tamanho 50 e janela de tamanho 3. Além de verificar a quantidade.
+Deste modo, detecta erros numéricos que poderiam passar despercebidos ainda que o tamanho estivesse correto.
