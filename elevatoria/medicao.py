@@ -63,7 +63,37 @@ def medir(registros: list[Registro], tag: str, curva: CurvaCalibracao,
     for zero ou se sobrarem menos de 2 leituras válidas. Um `ValueError` da curva (contagem
     fora do domínio) não é tratado: ele chega a quem chamou `medir`.
     """
-    raise NotImplementedError("issue #6: medir")
+    if u_sistematica < 0:
+        raise ValueError(f"u_sistematica deve ser não negativa; recebi {u_sistematica}")
+
+    # obtém as contagens da `tag` (chave `"contagens"`) com `serie`, do Marco 1
+    contagens = serie(registros, tag, "contagens")
+    if len(contagens) < 2:
+        raise ValueError(f"a tag {tag!r} tem {len(contagens)} leitura(s); são necessárias pelo menos 2")
+
+    # converte as contagens com a `curva`
+    convertidas = curva(contagens)
+
+    # descarta as leituras espúrias pelo z robusto: `z = (x - mediana) / MAD`, com a MAD
+    MAD = stats.median_abs_deviation(convertidas, scale="normal")
+    if MAD == 0.0:
+        raise ValueError(f"MAD = 0 para a tag {tag!r}; não é possível medir")
+    z = (convertidas - np.median(convertidas)) / MAD
+    espurias = np.where(np.abs(z) > limiar)[0].tolist()
+
+    if len(convertidas) - len(espurias) < 2:
+        raise ValueError(f"sobraram menos de 2 leituras válidas para a tag {tag!r}")
+
+    validas = [x for i, x in enumerate(convertidas) if i not in espurias]
+
+    # com as leituras válidas, calcula a média, o desvio padrão amostral (`ddof=1`) e o erro padrão da média (`scipy.stats.sem`)
+    media = np.mean(validas)
+    desvio_padrao = np.std(validas, ddof=1)
+    erro_padrao = stats.sem(validas, ddof=1)
+
+    # devolve uma `Medicao` cuja `medida` é `Medida(média, u)`, com `u = sqrt(erro_padrao² + u_sistematica²)
+    medida = Medida(media, np.sqrt(erro_padrao**2 + u_sistematica**2))
+    return Medicao(tag, medida, desvio_padrao, len(validas), espurias)
 
 
 def altura_manometrica(registros: list[Registro], curva: CurvaCalibracao,
