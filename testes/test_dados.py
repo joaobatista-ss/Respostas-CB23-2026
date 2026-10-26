@@ -65,6 +65,13 @@ class TestSerieTemporalReamostrar(unittest.TestCase):
         self.assertIsInstance(resultado, SerieTemporal)
         self.assertTrue(np.allclose(resultado, [1.5, 3.5, 5.5]))
 
+    def test_reamostrar_descarta_sobra_no_fim(self):
+        """Os pontos finais que não completam um bloco são descartados."""
+        s = SerieTemporal.de_lista([1, 2, 3, 4, 5, 6, 7])
+        resultado = s.reamostrar(3)
+        self.assertEqual(len(resultado), 2)
+        self.assertTrue(np.allclose(resultado, [2.0, 5.0]))
+
 
 class TestLerLog(unittest.TestCase):
     """Testes das regras do contrato de ler_log em dados."""

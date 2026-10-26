@@ -165,6 +165,9 @@ Marco 1: todos os assert passaram.
 ```
 
 
+### Pontos de atenção para o revisor
+- A resposta R7 do RELATORIO.md ultrapassa o limite de 6 linhas para registrar o raciocínio completo sobre o defeito da issue #4 e a sua correção.
+
 ## Marco 2
 Resolve as issues #6 e #7 do enunciado.
 
@@ -180,7 +183,7 @@ Resolve as issues #6 e #7 do enunciado.
 - Seção Marco 2 do RELATORIO.md (R8 a R10)
 
 ### Como testei
-- `python -m unittest discover -v`: 57 testes, todos passando
+- `python -m unittest discover -v`: 58 testes, todos passando
 - `python marco1.py` e `python marco2.py`: todos os assert passam
 - Os testes de regressão da issue #7 falham com o código original do AcumuladorKahan
 
