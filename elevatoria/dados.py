@@ -166,7 +166,7 @@ def serie(registros: list[Registro], tag: str, chave: str) -> SerieTemporal:
         if registro.tag != tag:
             continue
         valor = registro.valores.get(chave)
-        if valor:
+        if valor is not None:
             lista_de_valores.append(valor)
     return SerieTemporal.de_lista(lista_de_valores)
 
