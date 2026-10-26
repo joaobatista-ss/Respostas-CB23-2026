@@ -141,3 +141,63 @@ Mais um caso que eles não cobrem e qual teste seu o cobre:
 Outro caso não coberto pelas verificações anteriores é a verificação numérica de cada valor retornado.
 O teste test_media_movel que foi implementado, passa a verificar numericamente - usando np.allclose - cada um dos valores retornados por media_movel, tendo como parametro um array de tamanho 50 e janela de tamanho 3. Além de verificar a quantidade.
 Deste modo, detecta erros numéricos que poderiam passar despercebidos ainda que o tamanho estivesse correto.
+
+## Marco 2
+
+### Ambiente
+
+<!-- Cole a saída da Etapa 0 do `python marco2.py`. -->
+
+=== Etapa 0: ambiente ===
+Python 3.12.10 | NumPy 2.5.3 | SciPy 1.18.1 | fornecido 2.0 | matrícula 3500
+
+### R8 — Derivada numérica
+
+<!-- Com a tabela da Etapa 1(b): por que o erro diminui quando h vai de 1 até cerca de 1e-5 e depois volta a crescer? Que tipo de erro domina em cada lado? Por que, em h = 1e-14, o erro é exatamente a própria derivada? (Experimente 1000 + 1e-14 == 1000.) -->
+
+      k        h         erro
+      0    1e+00    1.658e-05
+      1    1e-01    1.657e-06
+      2    1e-02    1.657e-07
+      3    1e-03    1.654e-08
+      4    1e-04    1.367e-09
+      5    1e-05    6.224e-10
+      6    1e-06    5.062e-09
+      7    1e-07    6.191e-08
+      8    1e-08    2.780e-06
+      9    1e-09    1.415e-05
+     10    1e-10    5.826e-04
+     11    1e-11    2.701e-04
+     12    1e-12    1.394e-02
+     13    1e-13    7.078e-02
+     14    1e-14    2.134e-01
+    menor erro: h = 1e-5, erro = 6.224e-10
+
+
+Quando h é grande, ocorre o erro de truncamento. A fórmula ignora os termos de Taylor de ordem h, então o erro cai proporcionalmente a h: de 1.658e-05 em h = 1 para 1.654e-08 em h = 1e-3, 10 vezes a cada linha.
+
+Quando h é muito pequeno, f(x+h) e f(x) ficam muito próximos, e acontece um erro de arredondamento, onde o resultado perde dígitos significativos. Esse erro aumenta, porque é dividido por um h cada vez menor, e chega a 2.134e-01 em h = 1e-14. O menor erro (6.224e-10) ocorre em h = 1e-5, onde os dois erros se equilibram.
+
+Quando h fica menor que o espaçamento entre os floats perto de 1000 (cerca de 1.1e-13), x + h é arredondado para x (1000 + 1e-14 == 1000 dá True), e o cálculo f(x+h) - f(x) retorna 0. Nesse caso, o erro corresponde a |0 - derivada|, que é a própria derivada.
+
+
+### R9 — Issue #7
+
+<!-- Os nomes dos seus testes de regressão; a causa: por que, em ponto flutuante,
+t - (s + y) dá sempre zero, embora seja algebricamente igual a (t - s) - y; por que os testes de aceitação não pegaram o defeito. -->
+
+Os testes são: test_soma_float e test_parcelas_pequenas_nao_se_perdem. Ambos falham com o código original (o primeiro obtém 100000.00000133288 em vez de 100000.0).
+t é definido como s+y. t - (s + y) dá sempre zero porque é equivalente a (s + y) - (s + y), onde as duas operações entre parênteses produzem exatamente o mesmo erro.
+Inverter a ordem das operações faz com que seja calculado ((s + y) - s) - y: (s + y) - s recupera a parte de y que realmente entrou na soma arredondada, e subtrair y dela dá o que se perdeu, que é a correção descontada da parcela seguinte.
+
+Os testes de aceitação não pegaram porque somam só 10 parcelas de 0.1: o erro (cerca de 1e-16) fica muito abaixo da tolerância do math.isclose, e até a soma ingênua passa. Nenhum deles compara o Kahan com o valor exato numa soma longa.
+
+### R10 — Precisão × exatidão
+
+<!-- Na Etapa 3(b), as curvas linear e spline dão praticamente o mesmo desvio, mas viéses bem diferentes para PT102. Explique a diferença entre precisão e exatidão com esses números e por que a média de quase 600 leituras não elimina o viés da curva linear. -->
+
+Precisão mede quão próximas as medidas estão da média delas. Exatidão (ou acurácia) mede o quão próximas estão as medidas do valor que elas deveriam ter.
+
+As duas curvas convertem as mesmas contagens (com o mesmo ruído) portanto, devem ter a mesma dispersão. De fato, as curvas lineares tiveram desvios 0.706 (PT101) e 0.515 (PT102) e as spline 0.710 e 0.517.
+
+A linear teve viés -1.840 e a spline -0.010 em PT102: a resposta do transmissor é curva, e a linear a aproxima por retas entre os pontos da tabela, errando sempre para o mesmo lado. A média de quase 600 leituras reduz só o erro aleatório (o erro padrão é de cerca de 0.02 kPa), mas não elimina o viés da curva linear, pois ele é igual em toda leitura, então não se cancela.

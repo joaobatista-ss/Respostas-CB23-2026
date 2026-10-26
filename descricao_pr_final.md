@@ -164,5 +164,26 @@ Tipo de 's[0]': float64
 Marco 1: todos os assert passaram.
 ```
 
+
+## Marco 2
+Resolve as issues #6 e #7 do enunciado.
+
+### O que mudou
+- Em Issue 6:
+  - Implementação de medir e altura_manometrica, em elevatoria/medicao.py
+  - Validações de medir: ValueError para u_sistematica negativa, tag com menos de 2 leituras, MAD = 0 e menos de 2 leituras válidas
+  - Correção em serie (Marco 1): leituras com valor 0 não são mais descartadas
+- Em Issue 7:
+  - Correção do AcumuladorKahan: a correção passa a ser calculada como (t - s) - y
+  - Testes de regressão: test_soma_float e test_parcelas_pequenas_nao_se_perdem
+- Testes de medir em testes/test_medicao.py
+- Seção Marco 2 do RELATORIO.md (R8 a R10)
+
+### Como testei
+- `python -m unittest discover -v`: 57 testes, todos passando
+- `python marco1.py` e `python marco2.py`: todos os assert passam
+- Os testes de regressão da issue #7 falham com o código original do AcumuladorKahan
+
 ### Pontos de atenção para o revisor
-- ...
+- Foi orientado que os commits não serão considerados durante a avaliação, apenas a versão final.
+
